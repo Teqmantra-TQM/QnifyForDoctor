@@ -1,24 +1,36 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useContext } from "react";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { AppThemeContext, AppThemeProvider } from "../context/AppThemeContext";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function LayoutContent() {
+  const { resolvedTheme } = useContext(AppThemeContext);
+  const isDark = resolvedTheme === "dark";
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+        
+        {/*Top & bottom safe area handling */}
+        <SafeAreaView
+          style={{ flex: 1 }}
+          edges={["top", "bottom"]}
+        >
+          <Stack screenOptions={{ headerShown: false }} />
+        </SafeAreaView>
+
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (  
+    <AppThemeProvider>
+      <LayoutContent />
+    </AppThemeProvider>
   );
 }
