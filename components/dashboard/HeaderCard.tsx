@@ -53,11 +53,11 @@ export default function HeaderCard({
         const res = await fetch(url);
         const data = await res.json();
 
-        setProvider(data);
+        setProvider(data?.provider);
       } catch (error) {
         console.error("Failed to fetch provider", error);
       } finally {
-        setLoading(false);
+        setLoading(false);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
       }
     };
 

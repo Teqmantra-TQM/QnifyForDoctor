@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleProp,
   StyleSheet,
@@ -47,7 +49,7 @@ export default function RegisterScreen() {
     primary_contact_name: "",
     email: "",
     mobile: "",
-    mobile_country_code: "+61",
+    mobile_country_code: "61",
     address: "",
     city: "",
     country: "Australia",
@@ -83,7 +85,6 @@ export default function RegisterScreen() {
         throw new Error("Registration failed");
       }
 
-      /* ✅ SAVE REGISTRATION STATE */
       await AsyncStorage.setItem("isRegistered", "true");
 
       Alert.alert("Success 🎉", "Registration completed successfully", [
@@ -102,35 +103,111 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <StatusBar style="dark" />
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+      style={styles.container}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <StatusBar style="dark" />
 
-      <Text style={styles.title}>Provider Registration</Text>
-      <Text style={styles.subtitle}>
-        Register your business to get started
-      </Text>
+        <Text style={styles.headerTitle}>Provider Registration</Text>
+        <Text style={styles.headerSubtitle}>
+          Register your business to get started
+        </Text>
 
-      <View style={styles.card}>
-        <Input label="Business Name" value={form.business_name} onChangeText={(v) => onChange("business_name", v)} />
-        <Input label="Primary Contact Name" value={form.primary_contact_name} onChangeText={(v) => onChange("primary_contact_name", v)} />
-        <Input label="Email" keyboardType="email-address" value={form.email} onChangeText={(v) => onChange("email", v)} />
+        <View style={styles.formContainer}>
+          <Input 
+            label="Business Name" 
+            placeholder="Enter business name"
+            value={form.business_name} 
+            onChangeText={(v) => onChange("business_name", v)} 
+          />
+          
+          <Input 
+            label="Primary Contact Name" 
+            placeholder="Enter contact person name"
+            value={form.primary_contact_name} 
+            onChangeText={(v) => onChange("primary_contact_name", v)} 
+          />
+          
+          <Input 
+            label="Email" 
+            placeholder="example@business.com"
+            keyboardType="email-address" 
+            autoCapitalize="none"
+            value={form.email} 
+            onChangeText={(v) => onChange("email", v)} 
+          />
 
-        <View style={styles.row}>
-          <Input label="Code" value={form.mobile_country_code} containerStyle={{ flex: 1, marginRight: 8 }} onChangeText={(v) => onChange("mobile_country_code", v)} />
-          <Input label="Mobile" keyboardType="number-pad" value={form.mobile} containerStyle={{ flex: 2 }} onChangeText={(v) => onChange("mobile", v)} />
+          <View style={styles.row}>
+            <Input 
+              label="Code" 
+              value={form.mobile_country_code} 
+              containerStyle={{ flex: 1, marginRight: 12 }} 
+              onChangeText={(v) => onChange("mobile_country_code", v)} 
+            />
+            <Input 
+              label="Mobile" 
+              placeholder="000 000 000"
+              keyboardType="number-pad" 
+              value={form.mobile} 
+              containerStyle={{ flex: 3 }} 
+              onChangeText={(v) => onChange("mobile", v)} 
+            />
+          </View>
+
+          <Input 
+            label="Address" 
+            placeholder="Street address"
+            value={form.address} 
+            onChangeText={(v) => onChange("address", v)} 
+          />
+          
+          <Input 
+            label="City" 
+            placeholder="City"
+            value={form.city} 
+            onChangeText={(v) => onChange("city", v)} 
+          />
+          
+          <Input 
+            label="Country" 
+            value={form.country} 
+            onChangeText={(v) => onChange("country", v)} 
+          />
+          
+          <Input 
+            label="Postcode" 
+            placeholder="Postcode"
+            keyboardType="number-pad" 
+            value={form.postcode} 
+            onChangeText={(v) => onChange("postcode", v)} 
+          />
+          
+          <Input 
+            label="Business Commence (YYYY-MM)" 
+            placeholder="2023-01"
+            value={form.business_commence_year_month} 
+            onChangeText={(v) => onChange("business_commence_year_month", v)} 
+          />
+
+          <TouchableOpacity 
+            style={styles.registerButton} 
+            onPress={handleSubmit} 
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.registerButtonText}>Register</Text>
+            )}
+          </TouchableOpacity>
         </View>
-
-        <Input label="Address" value={form.address} onChangeText={(v) => onChange("address", v)} />
-        <Input label="City" value={form.city} onChangeText={(v) => onChange("city", v)} />
-        <Input label="Country" value={form.country} onChangeText={(v) => onChange("country", v)} />
-        <Input label="Postcode" keyboardType="number-pad" value={form.postcode} onChangeText={(v) => onChange("postcode", v)} />
-        <Input label="Business Commence (YYYY-MM)" value={form.business_commence_year_month} onChangeText={(v) => onChange("business_commence_year_month", v)} />
-
-        <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Register</Text>}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -138,9 +215,13 @@ export default function RegisterScreen() {
 
 function Input({ label, containerStyle, ...props }: InputProps) {
   return (
-    <View style={[styles.inputContainer, containerStyle]}>
+    <View style={[styles.inputGroup, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput {...props} style={styles.input} />
+      <TextInput 
+        {...props} 
+        style={styles.input} 
+        placeholderTextColor="#999"
+      />
     </View>
   );
 }
@@ -148,14 +229,63 @@ function Input({ label, containerStyle, ...props }: InputProps) {
 /* ---------- Styles ---------- */
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: "#F5F7FB", flexGrow: 1 },
-  title: { fontSize: 26, fontWeight: "700", marginBottom: 4 },
-  subtitle: { fontSize: 14, color: "#666", marginBottom: 20 },
-  card: { backgroundColor: "#fff", borderRadius: 16, padding: 16 },
-  inputContainer: { marginBottom: 14 },
-  label: { fontSize: 12, color: "#555", marginBottom: 6 },
-  input: { borderWidth: 1, borderRadius: 10, padding: 12 },
-  row: { flexDirection: "row" },
-  button: { backgroundColor: "#4F46E5", padding: 14, borderRadius: 12, alignItems: "center" },
-  buttonText: { color: "#fff", fontWeight: "600" },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 40,
+  },
+  formContainer: {
+    width: "100%",
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+    marginBottom: 8,
+  },
+  input: {
+    height: 56,
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: "#000",
+    backgroundColor: "#fff",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+  },
+  registerButton: {
+    backgroundColor: "#000",
+    height: 56,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  registerButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });
