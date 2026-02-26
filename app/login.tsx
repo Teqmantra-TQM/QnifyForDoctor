@@ -198,6 +198,7 @@
 //     fontWeight: "600",
 //   },
 // });
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
@@ -274,16 +275,54 @@ export default function LoginScreen() {
   };
 
  // Inside LoginScreen function
-const handleVerifyOtp = (code: string) => {
-  // For testing purposes, we ignore the code value and proceed
+const handleVerifyOtp = async (code: string) => {
   setShowOtpModal(false);
 
-  // Use router.push to navigate to your register.tsx file
-  // Expo Router uses file-based routing, so we use the filename "register"
-  router.push({
-    pathname: "/register",
-    params: { phoneNumber: `${countryCode}${mobile}` }
-  });
+  try {
+    setLoading(true);
+
+    const cleanCountryCode = countryCode.replace("+", "");
+
+    const url =
+      `https://qk3g2ita50.execute-api.ap-southeast-2.amazonaws.com/dev/provider` +
+      `?countryCode=${encodeURIComponent(cleanCountryCode)}` +
+      `&mobile=${encodeURIComponent(mobile)}`;
+
+    // console.log("Checking provider:", url);
+
+    const response = await fetch(url);
+    const text = await response.text();
+
+    if (!response.ok || !text) throw new Error("NOT_FOUND");
+
+    const provider = JSON.parse(text);
+
+    if (!provider || Object.keys(provider).length === 0) {
+      throw new Error("NOT_FOUND");
+    }
+
+    // USER EXISTS → SAVE DATA + DASHBOARD
+    await AsyncStorage.setItem("isRegistered", "true");
+    await AsyncStorage.setItem("provider", JSON.stringify(provider));
+    await AsyncStorage.setItem("mobile", mobile);
+    await AsyncStorage.setItem("countryCode", cleanCountryCode);
+
+    router.replace("/(tabs)");
+  } catch (error) {
+    console.log("❌ Provider not found → go register");
+
+    // NOT REGISTERED → REGISTER SCREEN
+    router.push({
+      pathname: "/register",
+      params: {
+        phoneNumber: `${countryCode}${mobile}`,
+        mobile,
+        countryCode,
+      },
+    });
+  } finally {
+    setLoading(false);
+  }
 };
 
   return (

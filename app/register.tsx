@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -62,6 +62,17 @@ export default function RegisterScreen() {
   const onChange = (key: keyof RegisterForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
+  const params = useLocalSearchParams();
+
+useEffect(() => {
+  if (params.mobile) {
+    setForm((prev) => ({
+      ...prev,
+      mobile: params.mobile as string,
+      mobile_country_code: (params.countryCode as string)?.replace("+", "") || "61",
+    }));
+  }
+}, []);
 
   const handleSubmit = async () => {
     if (!form.business_name || !form.email || !form.mobile) {

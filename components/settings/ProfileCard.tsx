@@ -1,12 +1,27 @@
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { AppThemeContext } from "../../context/AppThemeContext";
 
 export default function ProfileCard() {
   const { resolvedTheme } = useContext(AppThemeContext);
   const isDark = resolvedTheme === "dark";
+
+  const [provider, setProvider] = useState<any>(null);
+
+  useEffect(() => {
+    const loadProvider = async () => {
+      try {
+        const stored = await AsyncStorage.getItem("provider");
+        if (stored) setProvider(JSON.parse(stored));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    loadProvider();
+  }, []);
 
   const gradient: readonly [string, string, string] = isDark
     ? ["#312e81", "#581c87", "#7e22ce"]
@@ -19,9 +34,15 @@ export default function ProfileCard() {
       </View>
 
       <View style={{ marginLeft: 14 }}>
-        <Text style={styles.name}>Dr. Anderson</Text>
-        <Text style={styles.email}>anderson@hospital.com</Text>
-        <Text style={styles.role}>General Practitioner</Text>
+        <Text style={styles.name}>
+          {provider?.provider?.primary_contact_name || "User"}
+        </Text>
+        <Text style={styles.email}>
+          {provider?.provider?.email || "email@example.com"}
+        </Text>
+        <Text style={styles.role}>
+          {provider?.provider?.business_name || "Provider"}
+        </Text>
       </View>
     </LinearGradient>
   );

@@ -8,11 +8,11 @@ export default function Index() {
   const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
 
   useEffect(() => {
-    console.log("ROOT INDEX LOADED"); // 👈 DEBUG LINE
+    console.log("ROOT INDEX LOADED"); // DEBUG LINE
 
     const check = async () => {
       const value = await AsyncStorage.getItem("isRegistered");
-      console.log("isRegistered =", value); // 👈 DEBUG LINE
+      console.log("isRegistered =", value); // DEBUG LINE
       setIsRegistered(value === "true");
       setLoading(false);
     };

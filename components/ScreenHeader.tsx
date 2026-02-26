@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 interface ScreenHeaderProps {
@@ -8,49 +7,31 @@ interface ScreenHeaderProps {
 export default function ScreenHeader({ title }: ScreenHeaderProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.iconBox}>
-        {/*  Doctor-related icon */}
-        <Ionicons name="person-circle" size={22} color="#fff" />
-      </View>
-
-      <View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>Dr. Portal · Live Dashboard</Text>
-      </View>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.subtitle}>Live Dashboard</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderBottomWidth: 0.5,
-    borderColor: "#e5e7eb",
-  },
-
-  iconBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: "#4f46e5",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
+    borderColor: "#e5e5e5",
   },
 
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
-    color: "#111827",
+    color: "#000",
+    letterSpacing: 0.3,
   },
 
   subtitle: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "#666",
     marginTop: 2,
   },
 });

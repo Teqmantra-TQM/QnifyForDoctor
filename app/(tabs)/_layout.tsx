@@ -19,39 +19,33 @@ export default function TabLayout() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/*Custom Top Header */}
+      {/* ✅ Minimal Header */}
       <View
         style={[
           styles.header,
           {
-            backgroundColor: isDark ? "#0f172a" : "#ffffff",
-            borderColor: isDark ? "#1e293b" : "#e5e7eb",
+            backgroundColor: isDark ? "#000" : "#fff",
+            borderColor: isDark ? "#111" : "#e5e5e5",
           },
         ]}
       >
-        <View style={styles.iconBox}>
-          <Ionicons name="medical" size={22} color="#fff" />
-        </View>
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: isDark ? "#fff" : "#000" },
+          ]}
+        >
+          {getTitle()}
+        </Text>
 
-        <View>
-          <Text
-            style={[
-              styles.headerTitle,
-              { color: isDark ? "#ffffff" : "#111827" },
-            ]}
-          >
-            {getTitle()}
-          </Text>
-
-          <Text
-            style={[
-              styles.headerSubtitle,
-              { color: isDark ? "#94a3b8" : "#6b7280" },
-            ]}
-          >
-            Dr. Portal · Live Dashboard
-          </Text>
-        </View>
+        <Text
+          style={[
+            styles.headerSubtitle,
+            { color: isDark ? "#aaa" : "#666" },
+          ]}
+        >
+          Live Dashboard
+        </Text>
       </View>
 
       {/* Tabs */}
@@ -59,11 +53,11 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: isDark ? "#0f172a" : "#ffffff",
-            borderTopColor: isDark ? "#1e293b" : "#e5e7eb",
+            backgroundColor: isDark ? "#000" : "#fff",
+            borderTopColor: isDark ? "#111" : "#e5e5e5",
           },
-          tabBarActiveTintColor: "#4f46e5",
-          tabBarInactiveTintColor: isDark ? "#94a3b8" : "#6b7280",
+          tabBarActiveTintColor: "#000",
+          tabBarInactiveTintColor: isDark ? "#aaa" : "#666",
         }}
       >
         <Tabs.Screen
@@ -112,26 +106,15 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    flexDirection: "row",
-    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderBottomWidth: 0.5,
   },
 
-  iconBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: "#4f46e5",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
+    letterSpacing: 0.3,
   },
 
   headerSubtitle: {
