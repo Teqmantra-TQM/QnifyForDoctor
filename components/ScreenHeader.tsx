@@ -8,7 +8,7 @@ export default function ScreenHeader({ title }: ScreenHeaderProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>Live Dashboard</Text>
+      {/* <Text style={styles.subtitle}>Live Dashboard</Text> */}
     </View>
   );
 }

@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Alert,
+  BackHandler,
   Modal,
   Pressable,
   StyleSheet,
@@ -36,6 +37,24 @@ export default function AddPatientModal({
     border: isDark ? "#334155" : "#e5e7eb",
   };
 
+  /*Handle Android back button */
+  useEffect(() => {
+    const backAction = () => {
+      if (visible) {
+        onClose();
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [visible]);
+
   const handleSubmit = () => {
     if (!name || !age || !reason) {
       Alert.alert("Error", "Please fill all fields");
@@ -50,7 +69,6 @@ export default function AddPatientModal({
     };
 
     onAdd(newPatient);
-
     setName("");
     setAge("");
     setReason("");
@@ -58,17 +76,42 @@ export default function AddPatientModal({
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.overlay}>
-        <View
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent
+      onRequestClose={onClose} // Android back fallback
+    >
+      {/* Click outside to close */}
+      <Pressable style={styles.overlay} onPress={onClose}>
+        {/* Prevent closing when clicking inside */}
+        <Pressable
           style={[
             styles.modalContent,
             { backgroundColor: theme.card },
           ]}
+          onPress={(e) => e.stopPropagation()}
         >
-          <Text style={[styles.title, { color: theme.text }]}>
-            Add Patient
-          </Text>
+          {/* Header with close button */}
+          <View style={styles.header}>
+  <Text style={[styles.title, { color: theme.text }]}>
+    Add Patient
+  </Text>
+
+  <Pressable
+    onPress={onClose}
+    hitSlop={10}
+    style={({ pressed }) => [
+      styles.closeBtn,
+      {
+        backgroundColor: isDark ? "#ae2300" : "#ffe5e5",
+        opacity: pressed ? 0.6 : 1,
+      },
+    ]}
+  >
+    <Text style={{ fontSize: 16, color: theme.text }}>✕</Text>
+  </Pressable>
+</View>
 
           <TextInput
             placeholder="Name"
@@ -109,8 +152,8 @@ export default function AddPatientModal({
               Add
             </Text>
           </Pressable>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -118,7 +161,7 @@ export default function AddPatientModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     justifyContent: "center",
     padding: 20,
   },
@@ -126,10 +169,15 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 16,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
   title: {
     fontWeight: "700",
     fontSize: 16,
-    marginBottom: 12,
   },
   input: {
     borderWidth: 1,
@@ -143,4 +191,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
+  closeBtn: {
+  width: 34,
+  height: 34,
+  borderRadius: 17,
+  justifyContent: "center",
+  alignItems: "center",
+},
 });

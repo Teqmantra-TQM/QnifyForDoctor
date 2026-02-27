@@ -38,14 +38,14 @@ export default function TabLayout() {
           {getTitle()}
         </Text>
 
-        <Text
+        {/* <Text
           style={[
             styles.headerSubtitle,
             { color: isDark ? "#aaa" : "#666" },
           ]}
         >
           Live Dashboard
-        </Text>
+        </Text> */}
       </View>
 
       {/* Tabs */}
@@ -56,7 +56,7 @@ export default function TabLayout() {
             backgroundColor: isDark ? "#000" : "#fff",
             borderTopColor: isDark ? "#111" : "#e5e5e5",
           },
-          tabBarActiveTintColor: "#000",
+         tabBarActiveTintColor: isDark ? "#fff" : "#000",
           tabBarInactiveTintColor: isDark ? "#aaa" : "#666",
         }}
       >
