@@ -3,14 +3,14 @@ import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const API_BASE =
@@ -33,32 +33,34 @@ const handleLogin = async () => {
     const cleanCountryCode = countryCode.replace("+", "");
 
     const url =
-      `https://qk3g2ita50.execute-api.ap-southeast-2.amazonaws.com/dev/provider` +
-      `?countryCode=${encodeURIComponent(cleanCountryCode)}` +
+      `${API_BASE}?countryCode=${encodeURIComponent(cleanCountryCode)}` +
       `&mobile=${encodeURIComponent(mobile)}`;
 
     console.log("🔗 API URL:", url);
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "2ZgK7j4wQ94s79ibN8R0I3l35C5XCYKQ2iLRI7La",
+      },
+    });
 
     console.log("📡 Status:", response.status);
 
-    const text = await response.text();
-    console.log("📦 Raw response:", text);
+    const data = await response.json();
+    console.log("📦 Parsed response:", data);
 
     if (!response.ok) {
+      throw new Error("API_ERROR");
+    }
+
+    // ✅ FIX: your API returns { count, providers: [] }
+    if (!data?.providers || data.providers.length === 0) {
       throw new Error("NOT_FOUND");
     }
 
-    if (!text) {
-      throw new Error("EMPTY_RESPONSE");
-    }
-
-    const provider = JSON.parse(text);
-
-    if (!provider || Object.keys(provider).length === 0) {
-      throw new Error("NOT_FOUND");
-    }
+    const provider = data.providers[0]; // 👈 important fix
 
     // ✅ SUCCESS
     await AsyncStorage.setItem("isRegistered", "true");
